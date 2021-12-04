@@ -1,0 +1,22 @@
+{
+  "name": "couchman-2",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "fontello:generate": "rm -r ./.fontello-session & fontello-cli --config ./src/scss/fontello/config.json --css ./src/scss/fontello/css --font ./src/scss/fontello/font install",
+    "fontello:open": "rm -r ./.fontello-session & fontello-cli --config ./src/scss/fontello/config.json open"
+  },
+  "dependencies": {
+    "vue": "^3.2.16",
+    "vue-router": "^4.0.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "sass": "^1.44.0",
+    "vite": "^2.6.4",
+    "vite-plugin-windicss": "^1.5.4",
+    "windicss": "^3.2.1"
+  }
+}

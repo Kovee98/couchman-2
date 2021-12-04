@@ -1,0 +1,54 @@
+button {
+    &:focus {
+        @apply outline-none;
+    }
+}
+
+.btn {
+    @apply
+        px-5
+        py-2
+        text-base
+        font-medium
+        leading-6
+        border
+        border-transparent
+        rounded-lg
+        cursor-pointer;
+
+    &:hover {
+        @apply shadow-md;
+    }
+
+    &:focus {
+        @apply outline-none;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
+.btn-primary {
+    @apply btn bg-yellow-800 text-white;
+}
+
+.btn-success {
+    @apply btn bg-green-500 text-white;
+}
+
+.btn-danger {
+    @apply btn bg-red-500 text-white;
+}
+
+.btn-flat {
+    @apply btn bg-transparent text-gray-100;
+}
+
+.btn-gray {
+    @apply btn bg-gray-400;
+}
+
+.btn-flat {
+    @apply btn bg-transparent text-gray-100;
+}
