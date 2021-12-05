@@ -8,6 +8,7 @@
                 aria-hidden="true"
             ></span>
             <button
+                @click="changeConn"
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 :class="{ 'text-gray-800 dark:text-gray-100': isActive }"
             >
@@ -33,24 +34,25 @@
 
 <script>
     import { computed } from 'vue';
-    import { useRoute } from 'vue-router';
+    import store from '../js/store.js';
 
     export default {
         props: {
             name: String,
-            cid: String
+            id: Number
         },
-        setup ({ name, cid }) {
-            const isActive = computed(() => {
-                return true;
-                // const $route = useRoute();
-                // return $route.path === route;
-            });
+
+        setup ({ name, id }) {
+            const isActive = computed(() => store?.currConn === id);
+
+            const changeConn = () => {
+                store.currConn = id;
+            };
 
             return {
                 isActive,
                 name,
-                cid
+                changeConn
             };
         },
     };

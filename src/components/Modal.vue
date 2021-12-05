@@ -5,7 +5,7 @@
     >
         <!-- backdrop -->
         <div
-            @click="closeNote"
+            @click="$emit('close')"
             class="absolute left-0 top-0 w-screen h-screen bg-black opacity-75 z-40"
         />
 
@@ -18,7 +18,7 @@
                 </h1>
 
                 <i
-                    @click="closeNote"
+                    @click="$emit('close')"
                     class="icon-cancel p-1 mb-6 cursor-pointer text-lg text-gray-500 hover:text-gray-200 duration-100"
                 />
             </div>
@@ -37,19 +37,12 @@
 </template>
 
 <script>
-    import { defineComponent, ref } from 'vue';
+    import { defineComponent } from 'vue';
 
     export default defineComponent({
         props: {
+            isOpen: Boolean,
             title: String
-        },
-
-        setup () {
-            const isOpen = ref(true);
-
-            return {
-                isOpen
-            };
         }
     });
 </script>

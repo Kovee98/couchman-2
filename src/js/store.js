@@ -4,8 +4,8 @@ import { local } from './storage.js';
 const name = 'couchman_store';
 const _defaults = {
     isDark: true,
-    id: -1,
-    connections: {}
+    currConn: 0,
+    conns: {}
 };
 
 const initState = local.get(name, _defaults);

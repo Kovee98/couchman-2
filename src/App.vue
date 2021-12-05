@@ -1,29 +1,37 @@
 <template>
     <div :class="{ 'dark': isDark }">
-        <div v-if="$route.meta.navbar === false">
-            <router-view />
-        </div>
-        <div v-else>
-            <NavBar>
+        <div class="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+            <TopBar
+                @open-sidebar="isSideBarOpen = true"
+            />
+
+            <SideBar />
+
+            <main class="container grid px-6 mx-auto">
                 <router-view />
-            </NavBar>
+            </main>
         </div>
     </div>
 </template>
 
 <script>
-    import { computed } from 'vue';
-    import NavBar from './components/NavBar.vue';
+    import { computed, ref } from 'vue';
+    import TopBar from './components/TopBar.vue';
+    import SideBar from './components/SideBar.vue';
     import store from './js/store.js';
 
     export default {
         components: {
-            NavBar
+            TopBar,
+            SideBar
         },
 
         setup () {
+            const isSideBarOpen = ref(false);
+
             return {
-                isDark: computed(() => store?.isDark)
+                isDark: computed(() => store?.isDark),
+                isSideBarOpen
             };
         }
     }

@@ -1,46 +1,48 @@
 <template>
     <Modal
-        title="Connection"
+        @close="isOpen = false"
+        :isOpen="isOpen"
+        :title="title || 'Connection'"
     >
         <template v-slot:default>
             <InputText
-                v-model="conn.name"
+                v-model="connection.name"
                 label="Name"
                 placeholder="Connection 1"
                 description="Name this connection"
             />
             <InputText
-                v-model="conn.url"
+                v-model="connection.url"
                 label="URL"
                 placeholder="http://localhost:5984"
                 description="The url for the server"
             />
             <InputText
-                v-model="conn.user"
+                v-model="connection.user"
                 label="Username"
             />
             <InputText
-                v-model="conn.pass"
+                v-model="connection.pass"
                 label="Password"
                 :password="true"
             />
         </template>
 
         <template v-slot:footer>
+            <!-- delete/cancel -->
             <button
-                @click="deleteNote"
+                @click="deleteConn"
                 class="btn-danger mr-2"
             >
                 <i class="icon-trash cursor-pointer text-lg text-gray-200" />
-                <!-- Delete -->
             </button>
 
             <div class="float-right">
                 <button
-                    @click="closeModal"
+                    @click="testConn"
                     class="btn-flat mr-2"
                 >
-                    Cancel
+                    Test
                 </button>
 
                 <button
@@ -58,6 +60,8 @@
     import { defineComponent, ref, reactive } from 'vue';
     import Modal from './Modal.vue';
     import InputText from './InputText.vue';
+    import store from '../js/store.js';
+    import emitter from '../js/mitt.js';
 
     export default defineComponent({
         components: {
@@ -70,8 +74,10 @@
         },
 
         setup () {
+            // create or edit
+            const mode = ref('create');
             const isOpen = ref(true);
-            const conn = reactive({
+            const connection = reactive({
                 name: '',
                 url: '',
                 user: '',
@@ -83,13 +89,29 @@
             };
 
             const saveConn = () => {
-                const connection = conn;
-                debugger;
+                connection.id = Object.keys(store.conns).length;
+                store.conns[connection.id] = connection;
+                closeModal();
             };
 
+            emitter.on('edit-conn', (conn = {}) => {
+                mode.value = 'edit';
+                connection.id = conn.id;
+                connection.name = conn.name;
+                connection.user = conn.user;
+                connection.pass = conn.pass;
+                isOpen.value = true;
+            });
+
+            emitter.on('create-conn', () => {
+                mode.value = 'create';
+                isOpen.value = true;
+            });
+
             return {
+                mode,
                 isOpen,
-                conn,
+                connection,
                 closeModal,
                 saveConn
             };
