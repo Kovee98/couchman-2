@@ -1,6 +1,7 @@
 {
   "name": "couchman-2",
-  "version": "0.0.0",
+  "description": "A multi-instance CouchDB manager with filtering, sorting, and a simple view system. Meant to be simple, intuitive, and persistent.",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
