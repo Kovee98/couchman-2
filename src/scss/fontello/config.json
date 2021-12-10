@@ -89,6 +89,24 @@
       "css": "trash-4",
       "code": 59399,
       "src": "modernpics"
+    },
+    {
+      "uid": "248db7c0563d8cee80b7041f7736dcad",
+      "css": "database",
+      "code": 59400,
+      "src": "entypo"
+    },
+    {
+      "uid": "85ef733b1e280809e8443f5f0167b5c2",
+      "css": "doc",
+      "code": 59401,
+      "src": "typicons"
+    },
+    {
+      "uid": "795efd07cd5205b589c883916a76cff0",
+      "css": "hdd",
+      "code": 61600,
+      "src": "fontawesome"
     }
   ]
 }

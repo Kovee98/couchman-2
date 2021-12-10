@@ -7,9 +7,12 @@
 .icon-trash-2:before { content: '\e805'; } /* '' */
 .icon-trash-3:before { content: '\e806'; } /* '' */
 .icon-trash-4:before { content: '\e807'; } /* '' */
+.icon-database:before { content: '\e808'; } /* '' */
+.icon-doc:before { content: '\e809'; } /* '' */
 .icon-down-open:before { content: '\f004'; } /* '' */
 .icon-right-open:before { content: '\f006'; } /* '' */
 .icon-github:before { content: '\f09b'; } /* '' */
+.icon-hdd:before { content: '\f0a0'; } /* '' */
 .icon-google:before { content: '\f1a0'; } /* '' */
 .icon-trash:before { content: '\f1f8'; } /* '' */
 .icon-facebook:before { content: '\f308'; } /* '' */

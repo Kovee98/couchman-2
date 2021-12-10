@@ -22,7 +22,7 @@
                     <tr
                         v-for="item in pageItems"
                         :key="item.id"
-                        class="text-gray-700 dark:text-gray-400 cursor-pointer hover:bg-gray-700"
+                        class="text-gray-700 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <td
                             v-for="col in columns"
