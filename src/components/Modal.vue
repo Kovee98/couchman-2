@@ -24,7 +24,7 @@
             </div>
 
             <!-- default, modal content -->
-            <div class="p-3">
+            <div class="p-3 h-full">
                 <slot />
             </div>
 

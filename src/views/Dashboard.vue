@@ -2,7 +2,7 @@
     <h1 class="py-2 my-3 text-2xl dark:text-gray-200">Databases</h1>
 
     <!-- Cards -->
-    <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+    <div class="grid gap-6 mb-8 md:grid-cols-3 xl:grid-cols-4">
         <!-- Card -->
         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
@@ -12,7 +12,20 @@
             </div>
             <div>
                 <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Databases</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">6389</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{databases.length}}</p>
+            </div>
+        </div>
+
+        <!-- Card -->
+        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+            <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Documents</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{ totalDocuments }}</p>
             </div>
         </div>
 
@@ -29,25 +42,12 @@
             </div>
             <div>
                 <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Disk Size</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">46.8GB</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{ totalDiskSize }}</p>
             </div>
         </div>
 
         <!-- Card -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-            <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">New sales</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">376</p>
-            </div>
-        </div>
-
-        <!-- Card -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+        <!-- <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -61,7 +61,7 @@
                 <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Pending contacts</p>
                 <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">35</p>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <DatabaseTable
@@ -133,9 +133,11 @@
 </template>
 
 <script>
-    import { reactive } from 'vue';
+    import { computed, reactive, watch } from 'vue';
     import DatabaseTable from '../components/DatabaseTable.vue';
     import ConnectionModal from '../components/ConnectionModal.vue';
+    import store from '../js/store.js';
+    import { formatBytes } from '../js/util';
 
     export default {
         components: {
@@ -144,14 +146,53 @@
         },
 
         setup () {
-            const databases = reactive([
-                'asdf',
-                'dfjdfjd',
-                'yyhfh'
-            ]);
+            const databases = reactive([]);
+
+            const loadDBs = (conn) => {
+                try {
+                    const url = new URL(conn.url);
+                    const auth = btoa(`${conn.user}:${conn.pass}`);
+
+                    fetch(`${url.origin}/_all_dbs`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Basic ${auth}`
+                        }
+                    })
+                        .then((res) => res.json())
+                        .then((dbs) => {
+                            dbs = dbs.splice(0, 50);
+                            return fetch(`${url.origin}/_dbs_info`, {
+                                method: 'post',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Basic ${auth}`
+                                },
+                                body: JSON.stringify({ keys: dbs })
+                            }).then((res) => res.json());
+                        })
+                        .then((dbs) => dbs.map((db) => ({ ...db.info, size: db.info.sizes.file })))
+                        .then((dbs) => dbs.sort((db1, db2) => db1.db_name - db2.db_name))
+                        .then((dbs) => {
+                            databases.splice(0, databases.length, ...dbs);
+                        });
+                } catch (err) {
+                    console.error('loadDBs:err:', err);
+                }
+            };
+
+            watch(() => store.conns[store.currConn], loadDBs);
+
+            const totalDocuments = computed(() => databases.reduce((acc, curr) => acc + curr.doc_count, 0));
+            const totalDiskSize = computed(() => formatBytes(databases.reduce((acc, curr) => acc + curr.size, 0)));
+
+            // call initial loading of dbs
+            loadDBs(store.conns[store.currConn]);
 
             return {
-                databases
+                databases,
+                totalDocuments,
+                totalDiskSize
             };
         }
     }

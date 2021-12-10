@@ -76,7 +76,7 @@
         setup () {
             // create or edit
             const mode = ref('create');
-            const isOpen = ref(true);
+            const isOpen = ref(false);
             const connection = reactive({
                 name: '',
                 url: '',
@@ -89,7 +89,7 @@
             };
 
             const saveConn = () => {
-                connection.id = Object.keys(store.conns).length;
+                connection.id = Date.now();
                 store.conns[connection.id] = connection;
                 closeModal();
             };
