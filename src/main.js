@@ -7,7 +7,8 @@ import 'virtual:windi-base.css'
 import 'virtual:windi-components.css'
 import './scss/index.scss';
 import './scss/fontello/css/fontello.css';
-import 'virtual:windi-utilities.css'
+import 'virtual:windi-utilities.css';
+import '../node_modules/workerpool/dist/workerpool.js';
 
 const router = createRouter({
     history: createWebHistory(),

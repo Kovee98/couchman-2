@@ -137,29 +137,62 @@
 
         setup () {
             const databases = reactive([]);
+            const pool = workerpool.pool({
+                minWorkers: 'max',
+                maxWorkers: 4
+            });
+
+            const getAllDBs = (url, auth) => {
+                return fetch(`${url}/_all_dbs`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${auth}`
+                    }
+                }).then((res) => res.json());
+            };
+
+            const getDBChunk = (dbs) => {
+                return fetch(`${url.origin}/_dbs_info`, {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${auth}`
+                    },
+                    body: JSON.stringify({ keys: dbs })
+                }).then((res) => res.json());
+            };
 
             const loadDBs = (conn) => {
                 try {
-                    const url = new URL(conn.url);
+                    // const url = new URL(conn.url);
                     const auth = btoa(`${conn.user}:${conn.pass}`);
+                    
+                    pool.exec(getAllDBs, [ conn.url, auth ])
+                        .then((allDbs) => {
+                            return new Promise((resolve) => {
+                                const chunkSize = 100;
+                                const numRequests = Math.ceil(allDbs.length / chunkSize);
+                                let index = 0;
 
-                    fetch(`${url.origin}/_all_dbs`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Basic ${auth}`
-                        }
-                    })
-                        .then((res) => res.json())
-                        .then((dbs) => {
-                            dbs = dbs.splice(0, 50);
-                            return fetch(`${url.origin}/_dbs_info`, {
-                                method: 'post',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Basic ${auth}`
-                                },
-                                body: JSON.stringify({ keys: dbs })
-                            }).then((res) => res.json());
+                                while (allDbs.length > 0) {
+                                    const dbs = allDbs.splice(0, chunkSize);
+
+                                    pool.exec(getDBChunk, [ dbs ])
+                                        .then((res) => {
+                                            console.log('res:', res);
+                                            // add dbs to databases array (object?)
+                                        })
+                                        .finally(() => {
+                                            index++;
+
+                                            if (index >= numRequests) {
+                                                return resolve(true);
+                                            }
+                                        })
+                                }
+                            });
+
+                            // dbs = dbs.splice(0, 50);
                         })
                         .then((dbs) => dbs.map((db) => ({ ...db.info, size: db.info.sizes.file })))
                         .then((dbs) => dbs.sort((db1, db2) => db1.db_name - db2.db_name))
