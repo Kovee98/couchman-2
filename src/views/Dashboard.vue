@@ -2,7 +2,7 @@
     <h1 class="py-2 my-3 text-2xl dark:text-gray-200">Databases</h1>
 
     <!-- Cards -->
-    <div class="grid gap-6 mb-8 md:grid-cols-3 xl:grid-cols-4">
+    <div class="grid gap-6 mb-8 md:grid-cols-3 xl:grid-cols-3">
         <!-- database count -->
         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
@@ -10,7 +10,7 @@
             </div>
             <div>
                 <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Databases</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{databases.length}}</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{ totalDatabases }}</p>
             </div>
         </div>
 
@@ -123,11 +123,12 @@
 </template>
 
 <script>
-    import { computed, reactive, watch } from 'vue';
+    import { computed, reactive, watch, ref } from 'vue';
     import DatabaseTable from '../components/DatabaseTable.vue';
     import ConnectionModal from '../components/ConnectionModal.vue';
     import store from '../js/store.js';
     import { formatBytes } from '../js/util';
+    import pool from '../js/workerpool';
 
     export default {
         components: {
@@ -136,69 +137,39 @@
         },
 
         setup () {
+            const totalDatabases = ref(0);
             const databases = reactive([]);
-            const pool = workerpool.pool({
-                minWorkers: 'max',
-                maxWorkers: 4
-            });
 
-            const getAllDBs = (url, auth) => {
-                return fetch(`${url}/_all_dbs`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Basic ${auth}`
-                    }
-                }).then((res) => res.json());
-            };
-
-            const getDBChunk = (dbs) => {
-                return fetch(`${url.origin}/_dbs_info`, {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Basic ${auth}`
-                    },
-                    body: JSON.stringify({ keys: dbs })
-                }).then((res) => res.json());
+            const handlers = {
+                updateDBs (dbs) {
+                    databases.push(...dbs);
+                }
             };
 
             const loadDBs = (conn) => {
                 try {
-                    // const url = new URL(conn.url);
-                    const auth = btoa(`${conn.user}:${conn.pass}`);
-                    
-                    pool.exec(getAllDBs, [ conn.url, auth ])
-                        .then((allDbs) => {
-                            return new Promise((resolve) => {
-                                const chunkSize = 100;
-                                const numRequests = Math.ceil(allDbs.length / chunkSize);
-                                let index = 0;
+                    pool.queue({ task: 'getAllDBs', args: [ conn.url, conn.user, conn.pass ] }, {
+                        on (data) {
+                            if (data.task) {
+                                handlers[data.task](...data.args);
+                            }
+                        }
+                    }).then((allDbs) => {
+                        totalDatabases.value = allDbs.length;
+                        const chunkSize = 100;
 
-                                while (allDbs.length > 0) {
-                                    const dbs = allDbs.splice(0, chunkSize);
+                        while (allDbs.length > 0) {
+                            const dbs = allDbs.splice(0, chunkSize);
 
-                                    pool.exec(getDBChunk, [ dbs ])
-                                        .then((res) => {
-                                            console.log('res:', res);
-                                            // add dbs to databases array (object?)
-                                        })
-                                        .finally(() => {
-                                            index++;
-
-                                            if (index >= numRequests) {
-                                                return resolve(true);
-                                            }
-                                        })
+                            pool.queue({ task: 'getDBChunk', args: [ conn.url, conn.user, conn.pass, dbs ] }, {
+                                on (data) {
+                                    if (data.task) {
+                                        handlers[data.task](...data.args);
+                                    }
                                 }
                             });
-
-                            // dbs = dbs.splice(0, 50);
-                        })
-                        .then((dbs) => dbs.map((db) => ({ ...db.info, size: db.info.sizes.file })))
-                        .then((dbs) => dbs.sort((db1, db2) => db1.db_name - db2.db_name))
-                        .then((dbs) => {
-                            databases.splice(0, databases.length, ...dbs);
-                        });
+                        }
+                    });
                 } catch (err) {
                     console.error('loadDBs:err:', err);
                 }
@@ -214,6 +185,7 @@
 
             return {
                 databases,
+                totalDatabases,
                 totalDocuments,
                 totalDiskSize
             };
