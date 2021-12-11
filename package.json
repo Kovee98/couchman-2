@@ -12,8 +12,7 @@
   "dependencies": {
     "mitt": "^3.0.0",
     "vue": "^3.2.16",
-    "vue-router": "^4.0.12",
-    "workerpool": "^6.1.5"
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
