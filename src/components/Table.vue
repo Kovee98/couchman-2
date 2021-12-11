@@ -1,5 +1,8 @@
 <template>
     <div class="w-full overflow-hidden rounded-lg shadow-xs mb-7">
+        <span class="text-white">{{ sort }}</span><br>
+        <span class="text-white">{{ pageSort }}</span><br>
+        <span class="text-white">{{ sortedItems.map((item) => item.db_name) }}</span>
         <!-- table -->
         <div class="w-full overflow-x-auto">
             <table class="w-full whitespace-no-wrap">
@@ -9,7 +12,8 @@
                         <th
                             v-for="col in columns"
                             :key="col.id"
-                            class="px-4 py-3"
+                            @click="$emit('column-click', col)"
+                            class="px-4 py-3 cursor-pointer"
                         >
                             {{ col.name }}
                         </th>
@@ -94,12 +98,16 @@
 </template>
 
 <script>
-    import { ref, computed } from "vue";
+    import { ref, computed, watchEffect, watch } from "vue";
 
     export default {
         props: {
             items: Array,
             columns: Array,
+            sort: {
+                type: String,
+                default: 'db_name=asc'
+            },
             lookAhead: {
                 type: Number,
                 default: 2
@@ -110,9 +118,10 @@
             }
         },
 
-        setup ({ items, lookBehind, lookAhead }) {
+        setup ({ items, columns, sort, lookAhead, lookBehind }) {
             const index = ref(0);
             const pageSize = ref(10);
+            const orders = [ 'asc', 'dsc' ];
 
             const changePage = (inc) => {
                 index.value += inc;
@@ -120,10 +129,47 @@
 
             const pageCount = computed(() => Math.ceil(items.length / pageSize.value));
 
+            const pageSort = computed(() => {
+                console.log('computed changed!');
+                // derive field
+                const fields = columns.map((col) => col.key);
+                let field = sort.split('=')[0] || 'db_name';
+                if (!fields.includes(field)) {
+                    console.error(`table:err sort field '${field}' wasn't found in the column keys [${fields}]`);
+                    field = 'db_name';
+                }
+
+                // derive order
+                let order = sort.split('=')[1] || 'asc';
+                if (!orders.includes(order)) {
+                    console.error(`table:err sort order '${order}' wasn't found in [${orders}]`);
+                    field = 'asc';
+                }
+
+                return { field, order };
+            });
+
+            watch(() => sort, () => {
+                console.log('watch changed!');
+            });
+
+            const sortedItems = computed(() => {
+                const field = pageSort.value.field;
+                const order = pageSort.value.order;
+
+                return items.sort((item1, item2) => {
+                    if (order === 'asc') {
+                        return item1[field].localeCompare(item2[field]);
+                    } else {
+                        return item2[field].localeCompare(item1[field]);
+                    }
+                })
+            });
+
             const pageItems = computed(() => {
                 const start = index.value * pageSize.value;
                 const end = start + pageSize.value;
-                return items.slice(start, end);
+                return sortedItems.value.slice(start, end);
             });
 
             const pages = computed(() => {
@@ -137,7 +183,9 @@
                 pageIndex: index,
                 pageSize,
                 pageItems,
+                sortedItems,
                 pageCount,
+                pageSort,
                 changePage
             };
         }
