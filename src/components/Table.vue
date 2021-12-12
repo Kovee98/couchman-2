@@ -1,8 +1,5 @@
 <template>
     <div class="w-full overflow-hidden rounded-lg shadow-xs mb-7">
-        <span class="text-white">{{ sort }}</span><br>
-        <span class="text-white">{{ pageSort }}</span><br>
-        <span class="text-white">{{ sortedItems.map((item) => item.db_name) }}</span>
         <!-- table -->
         <div class="w-full overflow-x-auto">
             <table class="w-full whitespace-no-wrap">
@@ -13,9 +10,14 @@
                             v-for="col in columns"
                             :key="col.id"
                             @click="$emit('column-click', col)"
-                            class="px-4 py-3 cursor-pointer"
+                            class="px-4 py-3 cursor-pointer select-none dark:hover:text-gray-100"
                         >
-                            {{ col.name }}
+                            <span>{{ col.name }}</span>
+                            <i
+                                v-if="col.key === pageSort.field"
+                                class="float-right"
+                                :class="`icon-${pageSort.order === 'asc' ? 'up' : 'down'}-open`"
+                            />
                         </th>
                     </tr>
                 </thead>
@@ -26,7 +28,7 @@
                     <tr
                         v-for="item in pageItems"
                         :key="item.id"
-                        class="text-gray-700 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                        class="text-gray-700 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-100"
                     >
                         <td
                             v-for="col in columns"
@@ -45,10 +47,10 @@
         <!-- pagination -->
         <div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
             <span class="flex items-center col-span-3">
-                Showing {{ (pageIndex * pageSize) + 1 }}-{{ ((pageIndex * pageSize) + pageSize) - 1 }} of {{ items.length }}
+                Showing {{ (pageIndex * pageSize) + 1 }}-{{ Math.min((pageIndex * pageSize) + pageSize, items.length) }} of {{ items.length }}
             </span>
 
-            <span class="col-span-2"></span>
+            <span class="col-span-2" />
 
             <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
                 <nav
@@ -60,10 +62,10 @@
                         <button
                             @click="pageIndex--"
                             :disabled="pageIndex <= 0"
-                            class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple disabled:text-gray-600 disabled:cursor-default flip-x"
+                            class="px-3 py-1 rounded-md select-none rounded-l-lg focus:outline-none focus:shadow-outline-purple disabled:cursor-default dark:hover:text-gray-100 disabled:text-gray-600 hover:disabled:text-gray-600"
                             aria-label="Previous"
                         >
-                            <i class="icon-right-open" />
+                            <i class="icon-left-open" />
                         </button>
                     </div>
 
@@ -73,7 +75,7 @@
                             v-for="page in pages"
                             :key="page.id"
                             @click="pageIndex = page"
-                            class="w-full py-1 rounded-md focus:outline-none focus:shadow-outline-purple hover:text-white"
+                            class="w-7 py-1 rounded-md select-none focus:outline-none focus:shadow-outline-purple dark:hover:text-gray-100"
                             :class="{ 'text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600' : page === pageIndex, 'invisible' : page < 0 || page >= pageCount}"
                         >
                             {{ page + 1 }}
@@ -85,7 +87,7 @@
                         <button
                             @click="pageIndex++"
                             :disabled="pageIndex >= pageCount - 1"
-                            class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple disabled:text-gray-600 disabled:cursor-default"
+                            class="px-3 py-1 rounded-md select-none rounded-r-lg focus:outline-none focus:shadow-outline-purple disabled:text-gray-600 disabled:cursor-default dark:hover:text-gray-100 disabled:text-gray-600 hover:disabled:text-gray-600"
                             aria-label="Next"
                         >
                             <i class="icon-right-open" />
@@ -98,15 +100,34 @@
 </template>
 
 <script>
-    import { ref, computed, watchEffect, watch } from "vue";
+    import { ref, computed, watchEffect, watch, toRefs } from "vue";
+    import { searching, sorting } from '../js/list';
 
     export default {
         props: {
-            items: Array,
-            columns: Array,
+            items: {
+                type: Array,
+                required: true
+            },
+            columns: {
+                type: Array,
+                required: true
+            },
+            pageSize: {
+                type: Number,
+                default: 10
+            },
+            search: {
+                type: String,
+                default: ''
+            },
             sort: {
                 type: String,
                 default: 'db_name=asc'
+            },
+            page: {
+                type: Number,
+                default: 0
             },
             lookAhead: {
                 type: Number,
@@ -118,29 +139,28 @@
             }
         },
 
-        setup ({ items, columns, sort, lookAhead, lookBehind }) {
+        setup (props) {
+            const { items, columns, search, sort: sortStr, page, pageSize, lookAhead, lookBehind } = toRefs(props);
             const index = ref(0);
-            const pageSize = ref(10);
             const orders = [ 'asc', 'dsc' ];
 
             const changePage = (inc) => {
                 index.value += inc;
             };
 
-            const pageCount = computed(() => Math.ceil(items.length / pageSize.value));
+            const pageCount = computed(() => Math.ceil(items.value.length / pageSize.value));
 
             const pageSort = computed(() => {
-                console.log('computed changed!');
                 // derive field
-                const fields = columns.map((col) => col.key);
-                let field = sort.split('=')[0] || 'db_name';
+                const fields = columns.value.map((col) => col.key);
+                let field = sortStr.value.split('=')[0] || 'db_name';
                 if (!fields.includes(field)) {
                     console.error(`table:err sort field '${field}' wasn't found in the column keys [${fields}]`);
                     field = 'db_name';
                 }
 
                 // derive order
-                let order = sort.split('=')[1] || 'asc';
+                let order = sortStr.value.split('=')[1] || 'asc';
                 if (!orders.includes(order)) {
                     console.error(`table:err sort order '${order}' wasn't found in [${orders}]`);
                     field = 'asc';
@@ -149,22 +169,8 @@
                 return { field, order };
             });
 
-            watch(() => sort, () => {
-                console.log('watch changed!');
-            });
-
-            const sortedItems = computed(() => {
-                const field = pageSort.value.field;
-                const order = pageSort.value.order;
-
-                return items.sort((item1, item2) => {
-                    if (order === 'asc') {
-                        return item1[field].localeCompare(item2[field]);
-                    } else {
-                        return item2[field].localeCompare(item1[field]);
-                    }
-                })
-            });
+            const filteredItems = computed(() => searching.search(items.value, search.value));
+            const sortedItems = computed(() => sorting.sort(filteredItems.value, pageSort.value.field, pageSort.value.order));
 
             const pageItems = computed(() => {
                 const start = index.value * pageSize.value;
@@ -173,8 +179,8 @@
             });
 
             const pages = computed(() => {
-                const prevPages = new Array(lookBehind).fill().map((_, i) => index.value - (i + 1));
-                const nextPages = new Array(lookAhead).fill().map((_, i) => index.value + (i + 1));
+                const prevPages = new Array(lookBehind.value).fill().map((_, i) => index.value - (i + 1));
+                const nextPages = new Array(lookAhead.value).fill().map((_, i) => index.value + (i + 1));
                 return [ ...prevPages, index.value, ...nextPages ].sort((page1, page2) => page1 - page2);
             });
 

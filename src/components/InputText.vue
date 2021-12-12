@@ -55,8 +55,8 @@
             dark:placeholder-gray-500
             dark:focus:shadow-outline-gray
             dark:focus:placeholder-gray-600
-            dark:bg-gray-700
-            dark:focus:bg-gray-700
+            dark:bg-gray-800
+            dark:focus:bg-gray-800
             dark:text-gray-200
             focus:placeholder-gray-500
             focus:bg-white

@@ -2,7 +2,7 @@
 @import './mixins/btns.scss';
 @import './mixins/cards.scss';
 @import './mixins/inputs.scss';
-// @import './toast.scss';
+@import './mixins/transforms.scss';
 
 .container {
     max-width: 1280px !important;
@@ -13,29 +13,4 @@
     // font-family: 'Merriweather Sans', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.flip-x {
-    -moz-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    transform: scaleX(-1);
-    -ms-filter: fliph; /*IE*/
-    filter: fliph; /*IE*/
-}
-
-.flip-y {
-    -moz-transform: scaleY(-1);
-    -o-transform: scaleY(-1);
-    -webkit-transform: scaleY(-1);
-    transform: scaleY(-1);
-    -ms-filter: flipv; /*IE*/
-    filter: flipv; /*IE*/
-}
-
-.flip-xy {
-    -moz-transform: scale(-1, -1);
-    -o-transform: scale(-1, -1);
-    -webkit-transform: scale(-1, -1);
-    transform: scale(-1, -1);
 }

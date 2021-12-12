@@ -35,11 +35,11 @@ const master = {
                 const task = master.queue.shift();
                 worker.status = 'busy';
                 worker.postMessage(task);
-                console.log(`worker${worker.id} grabbing ${task.task}`);
+                // console.log(`worker${worker.id} grabbing ${task.task}`);
             } else {
                 // worker is ready for the next task
                 worker.status = 'ready';
-                console.log(`worker${worker.id} ready for the next task`);
+                // console.log(`worker${worker.id} ready for the next task`);
             }
         }
     },
@@ -55,7 +55,7 @@ const master = {
             if (task) {
                 worker.status = 'busy';
                 worker.postMessage(task);
-                console.log(`worker${worker.id} grabbing ${task.task}`);
+                // console.log(`worker${worker.id} grabbing ${task.task}`);
             }
         });
     }

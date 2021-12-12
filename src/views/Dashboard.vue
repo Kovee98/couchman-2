@@ -1,5 +1,5 @@
 <template>
-    <h1 class="py-2 my-3 text-2xl dark:text-gray-200">Databases</h1>
+    <h1 class="py-2 my-3 text-2xl dark:text-gray-200">Dashboard</h1>
 
     <!-- Cards -->
     <div class="grid gap-6 mb-8 md:grid-cols-3 xl:grid-cols-3">
