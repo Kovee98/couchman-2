@@ -1,10 +1,17 @@
 <template>
-    <h2 class="py-2 my-3 text-xl dark:text-gray-200">Databases</h2>
+    <h2 class="py-2 my-3 text-xl dark:text-gray-200">
+        Databases
+        <i
+            @click="isSearchOpen = !isSearchOpen"
+            class="icon-search cursor-pointer"
+        />
+    </h2>
 
     <InputText
+        v-show="isSearchOpen"
         v-model="search"
         label="Search"
-        placeholder="users_db"
+        placeholder="_users"
     />
 
     <Table
@@ -23,7 +30,6 @@
     import { useRoute, useRouter } from 'vue-router';
     import Table from './Table.vue';
     import InputText from './InputText.vue';
-    import { formatBytes } from '../js/util';
 
     export default {
         components: {
@@ -41,11 +47,13 @@
             const defaultSort = 'db_name=asc';
             const pageSize = 10;
             const search = ref('');
+            const searchInput = ref(null);
+            const isSearchOpen = ref(false);
             const columns = [
                 { name: 'Name', key: 'db_name', class: 'flex items-center text-sm' },
                 { name: '# Docs', key: 'doc_count' },
                 { name: '# Deleted', key: 'doc_del_count' },
-                { name: 'Size', key: 'size', format: formatBytes  }
+                { name: 'Size', key: 'size' }
             ];
 
             const columnClick = (col) => {
@@ -56,9 +64,6 @@
 
                 let order = 'asc';
                 if (col.key === currSort.field) {
-                    // toggle order (asc -> dsc -> undefined)
-                    // order = currSort.order === 'asc' ? 'dsc' : currSort.order === 'dsc' ? '' : 'asc';
-                    // toggle order (asc -> dsc)
                     order = currSort.order === 'asc' ? 'dsc' : 'asc';
                 }
 
@@ -70,6 +75,8 @@
             return {
                 pageSize,
                 search,
+                searchInput,
+                isSearchOpen,
                 sort: computed(() => route?.query?.sort || defaultSort),
                 page: computed(() => route?.query?.page || 0),
                 columns,

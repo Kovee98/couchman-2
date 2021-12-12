@@ -178,7 +178,7 @@
             watch(() => store.conns[store.currConn], loadDBs);
 
             const totalDocuments = computed(() => databases.reduce((acc, curr) => acc + curr.doc_count, 0));
-            const totalDiskSize = computed(() => formatBytes(databases.reduce((acc, curr) => acc + curr.size, 0)));
+            const totalDiskSize = computed(() => formatBytes(databases.reduce((acc, curr) => acc + curr.sizes.file, 0)));
 
             // call initial loading of dbs
             loadDBs(store.conns[store.currConn]);

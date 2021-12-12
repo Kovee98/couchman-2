@@ -1,3 +1,5 @@
+import { formatBytes } from '../../util.js';
+
 const worker = {
     getDBChunk (url, user, pass, dbs) {
         url = new URL(url);
@@ -11,7 +13,7 @@ const worker = {
             },
             body: JSON.stringify({ keys: dbs })
         }).then((res) => res.json())
-        .then((dbs) => dbs.map((db) => ({ ...db.info, size: db.info.sizes.file })))
+        .then((dbs) => dbs.map((db) => ({ ...db.info, size: formatBytes(db.info.sizes.file) })))
         .then((dbs) => {
             postMessage({
                 task: 'updateDBs',

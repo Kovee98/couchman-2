@@ -9,6 +9,7 @@
 
         <input
             class="input"
+            :class="classes"
             @input="(e) => $emit('update:modelValue', e.target.value)"
             :type="password ? 'password' : 'text'"
             :placeholder="placeholder"
@@ -32,7 +33,8 @@
             label: String,
             placeholder: String,
             description: String,
-            password: Boolean
+            password: Boolean,
+            classes: String
         },
 
         setup () {

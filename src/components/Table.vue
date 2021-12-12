@@ -169,8 +169,11 @@
                 return { field, order };
             });
 
-            const filteredItems = computed(() => searching.search(items.value, search.value));
-            const sortedItems = computed(() => sorting.sort(filteredItems.value, pageSort.value.field, pageSort.value.order));
+            const searchedItems = computed(() => {
+                const fields = columns.value.map((col) => col.key);
+                return searching.search(items.value, fields, search.value);
+            });
+            const sortedItems = computed(() => sorting.sort(searchedItems.value, pageSort.value.field, pageSort.value.order));
 
             const pageItems = computed(() => {
                 const start = index.value * pageSize.value;
@@ -188,6 +191,7 @@
                 pages,
                 pageIndex: index,
                 pageSize,
+                searchedItems,
                 pageItems,
                 sortedItems,
                 pageCount,
