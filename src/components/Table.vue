@@ -53,17 +53,13 @@
             <span class="col-span-2" />
 
             <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                <nav
-                    class="flex items-center"
-                    aria-label="Table navigation"
-                >
+                <nav class="flex items-center">
                     <!-- previous -->
                     <div class="w-10">
                         <button
                             @click="pageIndex--"
                             :disabled="pageIndex <= 0"
                             class="px-3 py-1 rounded-md select-none rounded-l-lg focus:outline-none focus:shadow-outline-purple disabled:cursor-default dark:hover:text-gray-100 disabled:text-gray-600 hover:disabled:text-gray-600"
-                            aria-label="Previous"
                         >
                             <i class="icon-left-open" />
                         </button>
@@ -88,7 +84,6 @@
                             @click="pageIndex++"
                             :disabled="pageIndex >= pageCount - 1"
                             class="px-3 py-1 rounded-md select-none rounded-r-lg focus:outline-none focus:shadow-outline-purple disabled:text-gray-600 disabled:cursor-default dark:hover:text-gray-100 disabled:text-gray-600 hover:disabled:text-gray-600"
-                            aria-label="Next"
                         >
                             <i class="icon-right-open" />
                         </button>

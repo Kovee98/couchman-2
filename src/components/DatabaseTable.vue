@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import Table from './Table.vue';
     import InputText from './InputText.vue';
@@ -46,9 +46,9 @@
             const route = useRoute();
             const defaultSort = 'db_name=asc';
             const pageSize = 10;
-            const search = ref('');
+            const search = ref(route?.query?.search);
             const searchInput = ref(null);
-            const isSearchOpen = ref(false);
+            const isSearchOpen = ref(!!route?.query?.search);
             const columns = [
                 { name: 'Name', key: 'db_name', class: 'flex items-center text-sm' },
                 { name: '# Docs', key: 'doc_count' },
@@ -71,6 +71,10 @@
 
                 router.push({ query: { sort: sortStr } });
             };
+
+            watch(search, (currSearch) => {
+                router.push({ query: { search: currSearch || undefined } });
+            });
 
             return {
                 pageSize,

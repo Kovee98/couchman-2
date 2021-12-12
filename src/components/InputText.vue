@@ -1,11 +1,11 @@
 <template>
     <div class="mb-5">
-        <span
+        <div
             v-if="label"
-            class="dark:text-gray-300 mb-1"
+            class="dark:text-gray-300 mb-2"
         >
             {{ label }}
-        </span>
+        </div>
 
         <input
             class="input"
