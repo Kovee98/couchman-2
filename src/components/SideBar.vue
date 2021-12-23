@@ -19,10 +19,11 @@
 
             <div class="mt-6">
                 <SideBarItem
-                    v-for="conn in conns"
+                    v-for="conn in store.conns"
                     :key="conn.id"
-                    :name="conn.name"
-                    :id="conn.id"
+                    :conn="conn"
+                    @edit-conn="editConn(conn)"
+                    @rm-conn="rmConn(conn)"
                 />
             </div>
             <div class="px-6 my-6">
@@ -61,15 +62,28 @@
                 emitter.emit('create-conn');
             };
 
+            const editConn = (conn) => {
+                emitter.emit('edit-conn', conn);
+            };
+
+            const rmConn = (conn) => {
+                if (conn.id === store?.currConn) {
+                    store.currConn = 0;
+                }
+
+                delete(store?.conns[conn.id]);
+            };
+
             emitter.on('open-sidebar', () => isOpen.value = true);
             emitter.on('toggle-sidebar', () => isOpen.value = !isOpen.value);
 
             return {
                 isOpen,
                 store,
-                conns: computed(() => Object.values(store?.conns)),
                 emitter,
-                addConn
+                addConn,
+                editConn,
+                rmConn
             };
         }
     }

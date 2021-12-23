@@ -8,47 +8,50 @@ button {
     @apply
         px-5
         py-2
-        text-base
-        font-medium
-        leading-6
-        border
-        border-transparent
+        min-w-20
         rounded-lg
-        cursor-pointer;
+        bg-opacity-100
+        cursor-pointer
+        hover:shadow-md
+        hover:bg-opacity-90
+        focus:outline-none;
 
-    &:hover {
-        @apply shadow-md;
-    }
+    // &:hover {
+    //     @apply shadow-md;
+    // }
 
-    &:focus {
-        @apply outline-none;
-    }
-
-    &:active {
-        transform: scale(0.97);
-    }
+    // &:focus {
+    //     @apply outline-none;
+    // }
 }
 
 .btn-primary {
-    @apply btn bg-yellow-800 text-white;
+    @apply
+        btn
+        bg-yellow-800
+        text-gray-200;
 }
 
 .btn-success {
-    @apply btn bg-green-500 text-white;
+    @apply
+        bg-green-500
+        btn
+        text-gray-200;
 }
 
 .btn-danger {
-    @apply btn bg-red-500 text-white;
+    @apply
+        bg-red-500
+        btn
+        text-gray-200;
 }
 
 .btn-flat {
-    @apply btn bg-transparent text-gray-100;
-}
-
-.btn-gray {
-    @apply btn bg-gray-400;
-}
-
-.btn-flat {
-    @apply btn bg-transparent text-gray-100;
+    @apply
+        btn
+        text-gray-200
+        border
+        border-gray-700
+        hover:text-gray-100
+        hover:border-gray-600;
 }

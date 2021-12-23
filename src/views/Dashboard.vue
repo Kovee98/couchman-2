@@ -148,6 +148,11 @@
 
             const loadDBs = (conn) => {
                 try {
+                    if (!conn || !conn.url || !conn.user || !conn.pass) return;
+
+                    // start clean
+                    databases.splice(0, databases.length);
+
                     pool.queue({ task: 'getAllDBs', args: [ conn.url, conn.user, conn.pass ] }, {
                         on (data) {
                             if (data.task) {

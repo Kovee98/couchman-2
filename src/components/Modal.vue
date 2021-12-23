@@ -5,7 +5,7 @@
     >
         <!-- backdrop -->
         <div
-            @click="$emit('close')"
+            @click="$emit('click-away')"
             class="absolute left-0 top-0 w-screen h-screen bg-black opacity-75 z-40"
         />
 
