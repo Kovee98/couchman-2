@@ -1,8 +1,8 @@
 <template>
     <Modal
-        @close="isOpen = false"
+        @close="closeModal"
         :isOpen="isOpen"
-        :title="title || 'Connection'"
+        :title="`${mode} Connection`"
     >
         <template v-slot:default>
             <InputText
@@ -31,7 +31,7 @@
         <template v-slot:footer>
             <!-- delete/cancel -->
             <button
-                @click="isOpen = false"
+                @click="closeModal"
                 class="btn-flat mr-2"
             >
                 Cancel
@@ -99,6 +99,7 @@
 
             const closeModal = () => {
                 isOpen.value = false;
+                testRes.value = 0;
             };
 
             const testConn = async () => {
@@ -174,11 +175,15 @@
     .failed {
         @apply
             text-red-500
-            border-red-500;
+            border-red-500
+            hover:text-red-500
+            hover:border-red-500;
     }
     .success {
         @apply
             text-green-500
-            border-green-500;
+            border-green-500
+            hover:text-green-500
+            hover:border-green-500;
     }
 </style>

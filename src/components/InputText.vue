@@ -28,11 +28,16 @@
             {{ label }}
         </label>
 
+        <i
+            v-if="icon"
+            :class="`relative left-2 top-[34px] icon-${icon} dark:text-gray-400`"
+        />
+
         <input
             :id="id"
             :name="id"
             class="input"
-            :class="classes"
+            :class="`${classes} ${icon ? 'pl-9' : ''}`"
             @input="(e) => $emit('update:modelValue', e.target.value)"
             :type="password ? 'password' : 'text'"
             :placeholder="placeholder"
@@ -58,7 +63,8 @@
             placeholder: String,
             description: String,
             password: Boolean,
-            classes: String
+            classes: String,
+            icon: String
         },
 
         setup () {
@@ -72,29 +78,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .input {
-        @apply
-            w-full
-            p-2
-            text-md
-            text-gray-700
-            placeholder-gray-600
-            bg-gray-100
-            border-1
-            border-gray-700
-            input
-            dark:placeholder-gray-500
-            dark:focus:shadow-outline-gray
-            dark:focus:placeholder-gray-600
-            dark:bg-gray-800
-            dark:focus:bg-gray-800
-            dark:text-gray-200
-            focus:placeholder-gray-500
-            focus:bg-white
-            focus:outline-none
-            focus:border-gray-600
-    }
-
     .desc {
         @apply
             w-full

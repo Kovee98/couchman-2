@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    import { ref, computed } from 'vue';
+    import { ref } from 'vue';
     import SideBarItem from './SideBarItem.vue';
     import ConnectionModal from './ConnectionModal.vue';
     import store from '../js/store.js';
@@ -58,7 +58,7 @@
             const isOpen = ref(false);
 
             const addConn = () => {
-                isOpen.value = false;
+                // isOpen.value = false;
                 emitter.emit('create-conn');
             };
 

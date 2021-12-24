@@ -1,6 +1,6 @@
 <template>
     <div :class="{ 'dark': isDark }">
-        <div class="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 overflow-y-auto">
+        <div class="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 overflow-y-auto">
             <TopBar
                 @open-sidebar="isSideBarOpen = true"
             />

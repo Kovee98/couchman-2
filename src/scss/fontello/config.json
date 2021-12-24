@@ -131,12 +131,6 @@
       "css": "plug",
       "code": 61926,
       "src": "fontawesome"
-    },
-    {
-      "uid": "5c8a627c2e11bfc2854045872f6bd8f4",
-      "css": "plug-1",
-      "code": 59396,
-      "src": "typicons"
     }
   ]
 }

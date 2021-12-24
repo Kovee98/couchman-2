@@ -8,10 +8,8 @@
             class="w-full inline-flex items-center justify-between text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
             :class="{ 'text-gray-800 dark:text-gray-100': isActive }"
         >
-
             <span class="flex items-center">
-                <!-- <i class="icon-plug" /> -->
-                <i class="icon-plug-1" />
+                <i class="icon-plug" />
                 <span class="ml-4">{{ conn.name }}</span>
             </span>
         </button>
@@ -24,20 +22,28 @@
         </button>
 
         <button
+            @click="rmConn"
+            class="hover:text-gray-800 dark:hover:text-gray-200"
+        >
+            <i :class="`icon-${isVerify ? 'warning' : 'trash'}`" />
+        </button>
+
+        <!-- <button
             v-if="!isVerify"
             @click="verify"
             class="hover:text-gray-800 dark:hover:text-gray-200"
         >
             <i class="icon-trash" />
-        </button>
+        </button> -->
 
-        <button
+        <!-- <button
             v-if="isVerify"
             @click.stop="$emit('rm-conn')"
+            @blur="console.log('adsf')"
             class="hover:text-gray-800 dark:hover:text-gray-200"
         >
             <i class="icon-warning" />
-        </button>
+        </button> -->
     </div>
 </template>
 
@@ -50,13 +56,24 @@
             conn: Object
         },
 
-        setup (props) {
+        setup (props, { emit }) {
             const { conn } = toRefs(props);
             const isVerify = ref(false);
             const isActive = computed(() => store?.currConn === conn.value.id);
 
             const changeConn = () => {
                 store.currConn = conn.value.id;
+            };
+
+            const rmConn = () => {
+                if (!isVerify.value) {
+                    isVerify.value = true;
+                    setTimeout(() => {
+                        isVerify.value = false;
+                    }, 3000);
+                } else {
+                    emit('rm-conn');
+                }
             };
 
             const verify = () => {
@@ -71,6 +88,7 @@
                 isActive,
                 store,
                 changeConn,
+                rmConn,
                 verify
             };
         },

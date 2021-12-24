@@ -2,9 +2,9 @@
     <h1 class="py-2 my-3 text-2xl dark:text-gray-200">Dashboard</h1>
 
     <!-- Cards -->
-    <div class="grid gap-6 mb-8 md:grid-cols-3 xl:grid-cols-3">
+    <div class="grid gap-6 mb-4 md:grid-cols-3 xl:grid-cols-3 dark:bg-gray-900 z-100">
         <!-- database count -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+        <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
                 <i class="icon-database" />
             </div>
@@ -15,7 +15,7 @@
         </div>
 
         <!-- document count -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+        <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
                 <i class="icon-doc" />
             </div>
@@ -26,7 +26,7 @@
         </div>
 
         <!-- size on disk -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+        <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
                 <i class="icon-hdd" />
             </div>

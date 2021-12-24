@@ -11,18 +11,13 @@ button {
         min-w-20
         rounded-lg
         bg-opacity-100
-        cursor-pointer
-        hover:shadow-md
-        hover:bg-opacity-90
-        focus:outline-none;
+        cursor-pointer;
 
-    // &:hover {
-    //     @apply shadow-md;
-    // }
-
-    // &:focus {
-    //     @apply outline-none;
-    // }
+    &:hover {
+        @apply  
+            shadow-md
+            bg-opacity-90
+    }
 }
 
 .btn-primary {
@@ -34,8 +29,8 @@ button {
 
 .btn-success {
     @apply
-        bg-green-500
         btn
+        bg-green-500
         text-gray-200;
 }
 
@@ -49,9 +44,14 @@ button {
 .btn-flat {
     @apply
         btn
-        text-gray-200
+        dark:text-gray-200
         border
-        border-gray-700
-        hover:text-gray-100
-        hover:border-gray-600;
+        dark:border-gray-700;
+    
+    &:hover {
+        @apply
+            border-gray-400
+            dark:text-gray-100
+            dark:border-gray-600;
+    }
 }

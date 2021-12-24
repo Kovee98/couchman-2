@@ -1,18 +1,17 @@
 <template>
-    <h2 class="py-2 my-3 text-xl dark:text-gray-200">
-        Databases
-        <i
-            @click="isSearchOpen = !isSearchOpen"
-            class="icon-search cursor-pointer"
-        />
-    </h2>
+    <div class="w-full py-3 mb-1 flex items-center justify-between">
+        <h2 class="text-xl dark:text-gray-200 z-100 bg-gray-100 dark:bg-gray-900">
+            Databases
+        </h2>
 
-    <InputText
-        v-show="isSearchOpen"
-        v-model="search"
-        label="Search"
-        placeholder="_users"
-    />
+        <InputText
+            v-model="search"
+            placeholder="_users"
+            icon="search"
+            class="mb-0 w-75"
+        />
+    </div>
+
 
     <Table
         :items="databases"

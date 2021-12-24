@@ -1,5 +1,22 @@
 .input {
     @apply
-        p-2
+        w-full
+        py-2 px-3
         rounded-md
+        placeholder-gray-600
+        bg-transparent
+        border
+        border-gray-300
+        dark:border-gray-700
+        text-gray-700
+        dark:text-gray-200;
+
+    &:focus {
+        @apply
+            dark:border-gray-600
+            outline-none
+            dark:shadow-outline-gray
+            placeholder-gray-500
+            dark:placeholder-gray-600;
+    }
 }
